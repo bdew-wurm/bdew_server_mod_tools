@@ -1,15 +1,17 @@
 package net.bdew.wurm.tools.server.internal;
 
-import com.wurmonline.server.creatures.Communicator;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.bytecode.BadBytecode;
+import net.bdew.wurm.tools.server.ServerThreadExecutor;
 import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
-import org.gotti.wurmunlimited.modloader.interfaces.*;
+import org.gotti.wurmunlimited.modloader.interfaces.PreInitable;
+import org.gotti.wurmunlimited.modloader.interfaces.ServerPollListener;
+import org.gotti.wurmunlimited.modloader.interfaces.WurmServerMod;
 
-public class ModTools implements WurmServerMod, PreInitable, Initable, PlayerMessageListener {
+public class ModTools implements WurmServerMod, PreInitable, ServerPollListener {
     public static final String VERSION = "0.9.0";
 
     @Override
@@ -94,20 +96,7 @@ public class ModTools implements WurmServerMod, PreInitable, Initable, PlayerMes
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Deprecated
-    @Override
-    public boolean onPlayerMessage(Communicator communicator, String message) {
-        return false;
-    }
-
-    @Override
-    public MessagePolicy onPlayerMessage(Communicator communicator, String message, String title) {
-//        if (communicator.getPlayer().getPower() == 5 && message.startsWith("#"))
-//            return CommandHandler.handleCommand(communicator, message, title);
-        return MessagePolicy.PASS;
+    public void onServerPoll() {
+        ServerThreadExecutor.INSTANCE.tick();
     }
 }

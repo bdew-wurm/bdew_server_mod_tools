@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * Data is stored as a string, it's (de)serialization and interpretation is up to the mod
  * <p>
  * Currently stored data will be automatically sent to other servers for players and items when they transfer
- * for other objects this can be arranged using packToStream and unpackFromStream methods
+ * for other objects this can be arranged using {@link #packToStream} and {@link #unpackFromStream} methods
  * <p>
  * Currently stored data will be automatically deleted for items and creatures when they are deleted
  * for other objects this can be performed using deleteAll method
