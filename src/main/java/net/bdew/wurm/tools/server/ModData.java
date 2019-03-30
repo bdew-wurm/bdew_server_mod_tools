@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class ModData {
     private static Connection db;
-    private static final Logger logger = Logger.getLogger("ExtendedData");
+    private static final Logger logger = Logger.getLogger("ModData");
 
     /**
      * This will be called automatically when the server is started
@@ -39,7 +39,7 @@ public class ModData {
             db = ModSupportDb.getModSupportDb();
             if (!ModSupportDb.hasTable(db, "BDEW_EXTENDED_DATA")) {
                 try (Statement statement = db.createStatement()) {
-                    logger.info("Creating table");
+                    logger.log(Level.INFO, "Creating table");
                     statement.execute("CREATE TABLE BDEW_EXTENDED_DATA (" +
                             "wurmId INTEGER," +
                             "key TEXT," +
@@ -47,7 +47,7 @@ public class ModData {
                             "PRIMARY KEY(wurmId,key));");
                 }
             }
-            logger.info("ModData initialized");
+            logger.log(Level.INFO, "ModData initialized");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -62,7 +62,7 @@ public class ModData {
      */
     public static void set(long wurmId, String key, String value) {
         try (PreparedStatement ps = db.prepareStatement("INSERT OR REPLACE INTO BDEW_EXTENDED_DATA (wurmId,key,value) VALUES (?, ?, ?)")) {
-            logger.info(String.format("Set data %s for %d to %s", key, wurmId, value));
+            logger.log(Level.FINEST, String.format("Set data %s for %d to %s", key, wurmId, value));
             ps.setLong(1, wurmId);
             ps.setString(2, key);
             ps.setString(3, value);
@@ -80,7 +80,7 @@ public class ModData {
      */
     public static void delete(long wurmId, String key) {
         try (PreparedStatement ps = db.prepareStatement("DELETE FROM BDEW_EXTENDED_DATA WHERE wurmId=? AND key=?")) {
-            logger.info(String.format("Delete data %s for %d", key, wurmId));
+            logger.log(Level.FINEST, String.format("Delete data %s for %d", key, wurmId));
             ps.setLong(1, wurmId);
             ps.setString(2, key);
             ps.execute();
@@ -98,7 +98,7 @@ public class ModData {
         try (PreparedStatement ps = db.prepareStatement("DELETE FROM BDEW_EXTENDED_DATA WHERE wurmId=?")) {
             ps.setLong(1, wurmId);
             ps.execute();
-            logger.info(String.format("Delete all data for %d - deleted %d entries", wurmId, ps.getUpdateCount()));
+            logger.log(Level.FINEST, String.format("Delete all data for %d - deleted %d entries", wurmId, ps.getUpdateCount()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -157,12 +157,12 @@ public class ModData {
             logger.log(Level.WARNING, String.format("Error getting data for %d during transfer", wurmId), e);
         }
 
-        logger.info(String.format("Packing %d entries for %d", props.size(), wurmId));
+        logger.log(Level.FINEST, String.format("Packing %d entries for %d", props.size(), wurmId));
 
         try {
             ds.writeInt(props.size());
             for (Map.Entry<String, String> entry : props.entrySet()) {
-                logger.info(String.format("Packed: %s - %s", entry.getKey(), entry.getValue()));
+                logger.log(Level.FINEST, String.format("Packed: %s - %s", entry.getKey(), entry.getValue()));
                 ds.writeUTF(entry.getKey());
                 ds.writeUTF(entry.getValue());
             }
@@ -189,18 +189,18 @@ public class ModData {
             return; // Don't overwrite db data on error
         }
 
-        logger.info(String.format("Unpacking %d entries for %d", props.size(), wurmId));
+        logger.log(Level.FINEST, String.format("Unpacking %d entries for %d", props.size(), wurmId));
 
         try {
             try (PreparedStatement ps = db.prepareStatement("DELETE FROM BDEW_EXTENDED_DATA WHERE wurmId=?")) {
                 ps.setLong(1, wurmId);
                 ps.execute();
-                logger.info(String.format("Deleted %d old entries", ps.getUpdateCount()));
+                logger.log(Level.FINEST, String.format("Deleted %d old entries", ps.getUpdateCount()));
             }
             try (PreparedStatement ps = db.prepareStatement("INSERT OR REPLACE INTO BDEW_EXTENDED_DATA (wurmId,key,value) VALUES (?, ?, ?)")) {
                 ps.setLong(1, wurmId);
                 for (Map.Entry<String, String> entry : props.entrySet()) {
-                    logger.info(String.format("Unpacked: %s - %s", entry.getKey(), entry.getValue()));
+                    logger.log(Level.FINEST, String.format("Unpacked: %s - %s", entry.getKey(), entry.getValue()));
                     ps.setString(2, entry.getKey());
                     ps.setString(3, entry.getValue());
                     ps.execute();
