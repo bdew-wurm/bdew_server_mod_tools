@@ -5,7 +5,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
 import javassist.bytecode.*;
-import net.bdew.wurm.tools.server.ByteCodeUtils;
+import net.bdew.wurm.tools.server.bytecode.ByteCodeUtils;
 
 public class TitleInjector {
     private final CtClass titleCls;

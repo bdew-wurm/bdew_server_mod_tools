@@ -1,4 +1,4 @@
-package net.bdew.wurm.tools.server;
+package net.bdew.wurm.tools.server.bytecode;
 
 import javassist.bytecode.Bytecode;
 import javassist.bytecode.CodeIterator;
