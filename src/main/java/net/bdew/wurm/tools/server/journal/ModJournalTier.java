@@ -1,11 +1,14 @@
 package net.bdew.wurm.tools.server.journal;
 
 import com.wurmonline.server.Players;
+import com.wurmonline.server.players.AchievementTemplate;
 import com.wurmonline.server.players.JournalReward;
 import com.wurmonline.server.players.JournalTier;
 import com.wurmonline.server.players.Player;
 import net.bdew.wurm.tools.server.ModData;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +19,27 @@ public class ModJournalTier extends JournalTier {
     public ModJournalTier(byte tierId, String tierName, byte lastTierId, byte nextTierId, int unlockNextNeeded, int... achievements) {
         super(tierId, tierName, lastTierId, nextTierId, unlockNextNeeded, -1, achievements);
     }
+
+    public ModJournalTier(byte tierId, String tierName, byte lastTierId, byte nextTierId, int unlockNextNeeded, AchievementTemplate... achievements) {
+        this(tierId, tierName, lastTierId, nextTierId, unlockNextNeeded,
+                Arrays.stream(achievements).mapToInt(AchievementTemplate::getNumber).toArray());
+    }
+
+    public ModJournalTier(byte tierId, String tierName, byte lastTierId, byte nextTierId, int unlockNextNeeded, String rewardText, Consumer<Player> reward, int... achievements) {
+        this(tierId, tierName, lastTierId, nextTierId, unlockNextNeeded, achievements);
+        setReward(new JournalReward(rewardText) {
+            @Override
+            public void runReward(Player player) {
+                reward.accept(player);
+            }
+        });
+    }
+
+    public ModJournalTier(byte tierId, String tierName, byte lastTierId, byte nextTierId, int unlockNextNeeded, String rewardText, Consumer<Player> reward, AchievementTemplate... achievements) {
+        this(tierId, tierName, lastTierId, nextTierId, unlockNextNeeded, rewardText, reward,
+                Arrays.stream(achievements).mapToInt(AchievementTemplate::getNumber).toArray());
+    }
+
 
     @Override
     public int getRewardFlag() {
