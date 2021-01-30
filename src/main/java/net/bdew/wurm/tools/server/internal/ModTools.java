@@ -12,7 +12,7 @@ import org.gotti.wurmunlimited.modloader.interfaces.ServerPollListener;
 import org.gotti.wurmunlimited.modloader.interfaces.WurmServerMod;
 
 public class ModTools implements WurmServerMod, PreInitable, ServerPollListener {
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "2.0.0";
 
     @Override
     public String getVersion() {
@@ -89,6 +89,13 @@ public class ModTools implements WurmServerMod, PreInitable, ServerPollListener 
             ctRBP.getMethod("unPackRecipes", "(Ljava/io/DataInputStream;J)V")
                     .insertAfter("_bdew_tools_cb.receiveData($2,$1);");
 
+            // ====
+
+            CtClass ctCreature = cp.getCtClass("com.wurmonline.server.creatures.Creature");
+            HookManager.getInstance().addCallback(ctCreature, "_bdew_tools_cb", hooks);
+
+            ctCreature.getMethod("setDeathEffects", "(ZII)V")
+                    .insertBefore("_bdew_tools_cb.creatureDied(this, this.attackers);");
 
         } catch (NotFoundException | CannotCompileException | BadBytecode e) {
             throw new RuntimeException(e);

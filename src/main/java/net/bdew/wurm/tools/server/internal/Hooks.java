@@ -1,7 +1,9 @@
 package net.bdew.wurm.tools.server.internal;
 
+import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.players.Titles;
 import net.bdew.wurm.tools.server.ModData;
+import net.bdew.wurm.tools.server.loot.LootManager;
 import org.gotti.wurmunlimited.modloader.callbacks.CallbackApi;
 
 import java.io.DataInputStream;
@@ -30,5 +32,10 @@ public class Hooks {
     @CallbackApi
     public void deleteData(long wurmId) {
         ModData.deleteAll(wurmId);
+    }
+
+    @CallbackApi
+    public static void creatureDied(Creature dead, Map<Long, Long> attackers) {
+        LootManager.creatureDied(dead, attackers);
     }
 }
