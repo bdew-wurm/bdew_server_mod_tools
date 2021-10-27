@@ -12,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 public class ModAchievements {
     public static class Builder {
         private final int id;
-        private String name, description, requirement;
+        private String name, description = "", requirement = "";
         private boolean invisible, showUpdatePopup, oneTimer, isForCooking, isInLiters;
         private int triggerOn = 1;
         private int[] achievementsTriggered = MiscConstants.EMPTY_INT_ARRAY;
